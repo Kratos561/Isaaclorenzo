@@ -1,0 +1,14 @@
+# Respaldos y material de trabajo (no publicar)
+Portafolio.zip
+Portafolio/
+deepseek_html_*.html
+ChatGPT Image *.png
+image.png_2K_*.jpeg
+
+# Sistema
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# Git
+.git/

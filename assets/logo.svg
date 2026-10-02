@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 360" role="img" aria-labelledby="logoTitle logoDesc">
+  <title id="logoTitle">AISAK 3D</title>
+  <desc id="logoDesc">Logo AISAK 3D — cintas entrelazadas negra y roja</desc>
+  <defs>
+    <linearGradient id="lg-red" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#FF1E18"/>
+      <stop offset=".45" stop-color="#E10600"/>
+      <stop offset="1" stop-color="#8E0400"/>
+    </linearGradient>
+    <linearGradient id="lg-red-dark" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#7A0300"/>
+      <stop offset="1" stop-color="#3D0200"/>
+    </linearGradient>
+    <linearGradient id="lg-black" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2E2E2E"/>
+      <stop offset=".5" stop-color="#111111"/>
+      <stop offset="1" stop-color="#000000"/>
+    </linearGradient>
+    <linearGradient id="lg-black-hi" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity=".14"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="soft" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#000000" flood-opacity=".55"/>
+    </filter>
+    <filter id="blur6">
+      <feGaussianBlur stdDeviation="4"/>
+    </filter>
+  </defs>
+
+  <!-- ===== BACK: barra vertical negra ===== -->
+  <g filter="url(#soft)">
+    <path d="M48 0 H108 L108 168 L78 198 L48 168 Z"
+      fill="url(#lg-black)" stroke="#F2EFE6" stroke-opacity=".24" stroke-width="1.2" stroke-linejoin="round"/>
+    <path d="M48 0 H62 L62 168 L48 168 Z" fill="url(#lg-black-hi)"/>
+    <!-- corte inferior -->
+    <path d="M48 168 L78 198 L68 208 L38 178 Z" fill="#000" opacity=".65"/>
+  </g>
+
+  <!-- ===== TAIL roja inferior (debajo) ===== -->
+  <g filter="url(#soft)">
+    <path d="M60 172 L120 232 L120 314 L100 344 L80 314 L36 200 Z"
+      fill="url(#lg-red)" stroke="#0A0A0A" stroke-opacity=".45" stroke-width="1.2" stroke-linejoin="round"/>
+    <!-- pliegue lateral oscuro -->
+    <path d="M36 200 L60 172 L60 198 L36 226 Z" fill="url(#lg-red-dark)"/>
+    <path d="M80 314 L100 344 L90 354 L70 324 Z" fill="url(#lg-red-dark)" opacity=".9"/>
+    <!-- highlight -->
+    <path d="M70 182 L115 227 L115 240 L65 195 Z" fill="#fff" opacity=".12"/>
+  </g>
+
+  <!-- sombra de cruce -->
+  <ellipse cx="68" cy="128" rx="28" ry="9" transform="rotate(-36 68 128)" fill="#000" opacity=".5" filter="url(#blur6)"/>
+
+  <!-- ===== CINTA ROJA superior — AISAK ===== -->
+  <g filter="url(#soft)">
+    <path d="M15 102 L105 12 L135 17 L146 32 L36 154 L12 144 L3 124 Z"
+      fill="url(#lg-red)" stroke="#0A0A0A" stroke-opacity=".35" stroke-width="1.1" stroke-linejoin="round"/>
+    <!-- pliegue inferior -->
+    <path d="M3 124 L12 144 L2 158 L0 132 Z" fill="url(#lg-red-dark)"/>
+    <path d="M12 144 L36 154 L28 166 L4 156 Z" fill="#000" opacity=".28"/>
+    <!-- brillo superior -->
+    <path d="M20 102 L108 16 L120 17 L28 108 Z" fill="#fff" opacity=".14"/>
+  </g>
+
+  <!-- Texto AISAK sobre cinta roja -->
+  <g transform="translate(22 141) rotate(-37)">
+    <text x="0" y="0"
+      font-family="Bricolage Grotesque, Arial Black, system-ui, sans-serif"
+      font-weight="800" font-size="26" letter-spacing="1.5"
+      fill="#0A0A0A" transform="skewX(-8)">AISAK</text>
+  </g>
+
+  <!-- ===== CINTA NEGRA frontal — 3D ===== -->
+  <g filter="url(#soft)">
+    <path d="M11 143 L101 53 L131 58 L142 73 L33 185 L17 175 L4 155 Z"
+      fill="url(#lg-black)" stroke="#F2EFE6" stroke-opacity=".26" stroke-width="1.3" stroke-linejoin="round"/>
+    <!-- pliegue -->
+    <path d="M4 155 L17 175 L9 189 L0 166 Z" fill="#222"/>
+    <path d="M17 175 L33 185 L25 199 L9 189 Z" fill="#000" opacity=".6"/>
+    <!-- highlight -->
+    <path d="M18 143 L106 55 L116 56 L26 148 Z" fill="url(#lg-black-hi)"/>
+  </g>
+
+  <!-- sombra bajo cinta negra -->
+  <ellipse cx="62" cy="188" rx="22" ry="7" transform="rotate(-36 62 188)" fill="#000" opacity=".45" filter="url(#blur6)"/>
+
+  <!-- Texto 3D sobre cinta negra -->
+  <g transform="translate(30 180) rotate(-37)">
+    <text x="1.6" y="1.8"
+      font-family="Bricolage Grotesque, Arial Black, system-ui, sans-serif"
+      font-weight="800" font-size="27" letter-spacing=".5"
+      fill="#7A0300" transform="skewX(-8)">3D</text>
+    <text x="0" y="0"
+      font-family="Bricolage Grotesque, Arial Black, system-ui, sans-serif"
+      font-weight="800" font-size="27" letter-spacing=".5"
+      fill="#E10600" transform="skewX(-8)">3D</text>
+  </g>
+</svg>

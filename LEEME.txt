@@ -1,0 +1,193 @@
+================================================================
+PORTAFOLIO ISAAC LORENZO — AISAK 3D
+Documentación para continuar el trabajo (humano o agente)
+================================================================
+Idioma de todo el sitio: ESPAÑOL. No reintroducir textos en inglés
+(solo se conservan nombres propios: Blender, Premiere, etc.,
+títulos de videos y términos de industria como "reel").
+
+----------------------------------------------------------------
+1. CÓMO VER LA WEB (IMPORTANTE)
+----------------------------------------------------------------
+NO abrir con doble clic (protocolo file://). Los videos de YouTube
+incrustados fallan con "Error 153" sin un origen http/https válido.
+
+Usar siempre el servidor local incluido:
+  1. Ejecutar:  Portafolio\servidor-local.ps1
+     (PowerShell: powershell -ExecutionPolicy Bypass -File .\servidor-local.ps1)
+  2. Abrir:     http://localhost:8000/index.html
+
+El servidor sirve la carpeta en el puerto 8000 con MIME correcto
+(html, css, js, svg, jpg, png, json). Al publicar en un hosting
+https (Netlify, Vercel, GitHub Pages) todo funciona sin el script.
+
+----------------------------------------------------------------
+2. ESTRUCTURA DE ARCHIVOS
+----------------------------------------------------------------
+Portafolio/
+  index.html        Página principal (portada + sobre mí + puertas +
+                    selección + servicios + proceso + stats + contacto)
+  3d.html           Subpágina 02: galería Arte 3D (4 piezas P01–P04)
+  videos.html       Subpágina 03: galería Video (6 videos V01–V06)
+  styles.css        Estilo compartido por las 3 páginas (única fuente)
+  servidor-local.ps1 Servidor estático local (ver punto 1)
+  LEEME.txt         Este archivo
+  assets/
+    logo.png        LOGO OFICIAL (876x1795, ~975KB). Ver punto 5.
+    logo.svg        Recreador vectorial antiguo, YA NO SE USA (quedó de
+                    respaldo; ninguna página lo referencia).
+    cover-bg.jpg    Fondo de la portada (1536x2752, red neuronal
+                    blanca sobre negro), opacidad 35% por CSS.
+    animations.js   Animaciones GSAP compartidas. Ver punto 7.
+  ChatGPT Image...png  Original del logo subido por el usuario (respaldo,
+                    no se referencia; la copia en uso es assets/logo.png).
+  image.png_2K...jpeg  Original del fondo subido por el usuario (respaldo,
+                    no se referencia; la copia en uso es assets/cover-bg.jpg).
+  deepseek_html_20260916_5c71f4.html
+                    Primera versión de una sola página. RESPALDO: no tocar
+                    ni referenciar; el sitio real son index/3d/videos.
+
+----------------------------------------------------------------
+3. ORDEN Y NUMERACIÓN (01 → 04, igual en nav y secciones)
+----------------------------------------------------------------
+  01 Sobre mí  → index.html#slate   (sección "01 / Perfil — Sobre mí")
+  02 Arte 3D   → 3d.html            (subpágina "02 / Render")
+  03 Video     → videos.html        (subpágina "03 / Video")
+  04 Contacto  → index.html#contact (sección "04 / Contacto")
+
+Orden de secciones en index.html (coincide con la numeración):
+  hero portada (#top) → sobre mí (#slate) → puertas 02/03 (.index-links)
+  → selección rápida (#selected) → servicios → marquee → proceso
+  → stats → contacto (#contact) con footer.
+El link activo del nav se marca por IntersectionObserver (solo los
+#slate y #contact en la principal; en subpáginas el activo es fijo).
+
+----------------------------------------------------------------
+4. SISTEMA VISUAL (no cambiar sin pedirlo)
+----------------------------------------------------------------
+Colores: negro #0A0A0A (fondo), tinta #141414, papel #F2EFE6 (texto),
+  rojo #E10600 (acento), rojo oscuro #7A0300.
+Fuentes: Ethnocentric Rg regular (display, igual que el logo; vía
+  CDN https://fonts.cdnfonts.com/css/ethnocentric — solo existe en
+  peso 400, los 700 se sintetizan; Bricolage queda de respaldo),
+  Chakra Petch light italic (acentos; cuadrada y tecno como Ethnocentric),
+  JetBrains Mono (mono, Google).
+Elementos fijos del estilo:
+  - Cursor personalizado (punto + etiqueta VER/ABRIR; oculto en táctil).
+  - Header fijo SOLO con el logo (sin texto), con sombreador: degradado
+    negro + blur de 12px y borde inferior al hacer scroll (.hdr--scrolled).
+    Se eliminó el antiguo mix-blend-mode: difference.
+  - La línea roja vertical de scroll (playhead) SE ELIMINÓ a petición.
+    Solo queda en el archivo de respaldo deepseek_*.html.
+  - Reveals por [data-reveal][data-from="up|right|mask"] con CSS; cuando
+    GSAP carga, él los controla (clase html.gsap-on desactiva las
+    transiciones CSS para no pelearse con los inline styles).
+
+----------------------------------------------------------------
+5. LOGO (regla del dueño: NO modificarlo, solo cambiarle el tamaño)
+----------------------------------------------------------------
+Archivo en uso: assets/logo.png (876x1795, vertical, fondo transparente).
+Solo se escala por CSS (.logo--header 60px, --hero, --divider 60px,
+--contact, .foot__logo 40px, fondos de tarjetas) con object-fit:contain.
+Favicon .png en las 3 páginas. Los width/height de los <img> respetan
+su proporción (ej. header 29x60).
+
+----------------------------------------------------------------
+6. PORTADA (hero de index.html, id="top", clase .hero--cover)
+----------------------------------------------------------------
+Contiene SOLO la palabra PORTAFOLIO a todo ancho (h1#cover-title con
+aria-label; spans internos aria-hidden para lectores de pantalla).
+  - .portafolio-word: display, clamp(2.6rem, 14vw, 21rem) [12.5vw en móvil],
+    nowrap, centrada. Primera mitad en contorno (text-stroke), segunda
+    sólida, con .wave-bar (barra roja vertical) detrás (.wave-stage).
+  - Fondo: assets/cover-bg.jpg a pantalla completa (object-fit:cover),
+    opacity .35, z-index 0; la palabra va en z-index 1.
+  - Animación (ver punto 7): respiración + brillo suave por letra,
+    inclinación 3D con el cursor y parallax con scroll.
+
+----------------------------------------------------------------
+7. ANIMACIONES GSAP (skills: gsap-core, gsap-timeline, gsap-scrolltrigger)
+----------------------------------------------------------------
+CDNs (cdnjs 3.12.5, antes del script inline, en las 3 páginas):
+  gsap.min.js + ScrollTrigger.min.js + assets/animations.js
+assets/animations.js contiene (todo dentro de gsap.matchMedia):
+  - Timeline de entrada del hero con labels (solo páginas con .hero__grid,
+    o sea 3d/videos; la portada ya no tiene rejilla).
+  - PORTAFOLIO: respiración (scale 1→1.015) + brillo suave viajando por
+    letras (opacity, stagger yoyo infinito) + inclinación 3D con cursor
+    (quickTo rotationX/Y, solo puntero fino) + parallax scrub.
+  - Logo flotante (yoyo) en heroes de subpáginas (.hero__logo img).
+  - Parallax scrub en .hero__name (con guards si no existe).
+  - Reveals [data-reveal] por lotes (ScrollTrigger.batch, start "top 88%",
+    once:true, stagger 0.12) según data-from (up/right/mask con clip-path).
+  - Marquee infinito (duplica hijos con aria-hidden, loop x lineal 24s).
+  - Botones .btn magnéticos (quickTo, solo puntero fino).
+  - Retrato .portrait con deriva scrub.
+  - ScrollTrigger.refresh() en window load.
+Reglas de las skills aplicadas: registerPlugin, defaults, camelCase y
+aliases de transform (x/y/scale/rotation/autoAlpha), eases documentados,
+matchMedia con prefers-reduced-motion (sin animación si se pide),
+sin scrub+toggleActions juntos, sin ScrollTrigger en tweens anidados.
+FALLBACK: si el CDN falla, los scripts inline (reveal por
+IntersectionObserver) y el CSS mantienen la web usable. Los reveals
+inline se desactivan solos si window.gsap+ScrollTrigger existen.
+
+----------------------------------------------------------------
+8. VIDEOS (videos.html: SOLO video + título, sin descripción)
+----------------------------------------------------------------
+Los 6 son YouTube del canal @Ekko-Sound, con patrón "fachada":
+miniatura hqdefault + botón ▶ que al clic inyecta el iframe con
+autoplay (así cargan rápido y reproducen DENTRO de la web).
+  V01 Milo J - 3 Pecado Despues ............ N8ENK1se66I
+  V02 Comercial de Comida .................. qLOa3IcbxlE
+  V03 Comercial Deportivo .................. jqgSZ3iCIGY
+  V04 Motion Graphics - Comercial de Nike .. 4--5J4b78jE
+  V05 Animacion de Meta .................... LELFhmCp2sA
+  V06 Comercial de Nike .................... JmmSd6xWtU4
+(Títulos verificados vía oEmbed de YouTube; son títulos propios, no
+traducir.) Cada tarjeta trae link "Ver en YouTube →" y "Siguiente".
+3d.html usa placeholders .slot (Portada 21:9/4:5/2:3/16:9): para publicar
+una pieza se reemplaza el <div class="slot"> por el <img> final.
+
+----------------------------------------------------------------
+9. SOBRE MÍ CON FOTO (index.html#slate)
+----------------------------------------------------------------
+Grid retrato (4:5) + bio. Para poner la foto real:
+  1. Guardar como assets/portrait.jpg (recomendado 1200x1500).
+  2. Descomentar el <img> indicado dentro de .portrait.
+Sin foto se ve el marcador "Tu foto aquí". Meta: Disciplina /
+Ubicación ("añade tu ciudad" pendiente) / Enfoque / Contacto.
+Email de contacto actual: hello@isaaclorenzo.example (cambiar por el
+real en index/3d/videos, CTAs + footers).
+
+----------------------------------------------------------------
+10. FOOTER (dentro de la sección contacto, en las 3 páginas)
+----------------------------------------------------------------
+Marca clicable (logo 40px + "Isaac Lorenzo — AISAK 3D", vuelve arriba),
+columnas Secciones y Contacto (email + YouTube →) con hover rojo, y
+barra inferior con © año automático (JS #year), etiqueta de página y
+"Volver arriba ↑" (usa #top; existe en los 3 heroes). Entra con reveal.
+
+----------------------------------------------------------------
+11. RESPONSIVE (escritorio intacto; todo bajo breakpoints en styles.css)
+----------------------------------------------------------------
+Bloque "RESPONSIVE" al final del CSS: variables compactas ≤720px,
+header compacto ≤640px (sin numeritos, con wrap de seguridad),
+titulares display con vw + hyphens ≤560px (portada 12.5vw),
+extra ≤380px, y anti-desbordes (flex-wrap, overflow-wrap, max-width).
+Nuevos estilos deben seguir este patrón (media queries, no tocar base).
+
+----------------------------------------------------------------
+12. NOTAS PARA OTRO AGENTE
+----------------------------------------------------------------
+- Idioma: todo en español. El lang="es" ya está en las 3 páginas.
+- No reintroducir: playhead, mix-blend en header, textos en inglés,
+  referencias a assets/logo.svg, iframes directos de YouTube en el HTML.
+- Orden de scripts al final del body: CDN gsap → ScrollTrigger →
+  assets/animations.js → script inline (header/reveal/cursor/año;
+  + fachada de videos en videos.html). Mantener ese orden.
+- Si se añaden [data-reveal], incluir siempre data-from="up|right|mask"
+  (los 3 existen y están verificados 1:1).
+- Servidor local requerido para probar videos (punto 1).
+- Puertos/archivos grandes: cover-bg.jpg y logo.png pesan ~1-3MB;
+  si se optimizan, mantener nombres y proporciones.
