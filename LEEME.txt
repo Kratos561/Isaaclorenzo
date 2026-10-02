@@ -156,7 +156,7 @@ Grid retrato (4:5) + bio. Para poner la foto real:
   1. Guardar como assets/portrait.jpg (recomendado 1200x1500).
   2. Descomentar el <img> indicado dentro de .portrait.
 Sin foto se ve el marcador "Tu foto aquí". Meta: Disciplina /
-Ubicación ("añade tu ciudad" pendiente) / Enfoque / Contacto.
+Ubicación: Santo Domingo / Enfoque / Contacto.
 Email de contacto actual: isaacjhovanni@gmail.com (cambiar por el
 real en index/3d/videos, CTAs + footers).
 
