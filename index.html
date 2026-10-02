@@ -284,13 +284,17 @@
   const cursor = document.getElementById('cursor');
   const label  = document.getElementById('cursorLabel');
   if (!cursor) return;
-  let x = innerWidth / 2, y = innerHeight / 2, tx = x, ty = y;
-  const tick = () => {
-    x += (tx - x) * 0.22; y += (ty - y) * 0.22;
+  let x = innerWidth / 2, y = innerHeight / 2, tx = x, ty = y, prev = 0;
+  const SMOOTH = 22; /* ms de suavizado; menor = respuesta más inmediata */
+  const tick = ts => {
+    if (!prev) prev = ts;
+    const dt = Math.min(64, ts - prev); prev = ts;
+    const k = 1 - Math.exp(-dt / SMOOTH); /* independiente de los FPS */
+    x += (tx - x) * k; y += (ty - y) * k;
     cursor.style.transform = `translate(${x}px, ${y}px) translate(-50%, -50%)`;
     requestAnimationFrame(tick);
   };
-  tick();
+  tick(0);
   window.addEventListener('pointermove', e => { tx = e.clientX; ty = e.clientY; }, { passive: true });
   document.querySelectorAll('[data-cursor], a, button').forEach(el => {
     const mode = el.getAttribute('data-cursor');
