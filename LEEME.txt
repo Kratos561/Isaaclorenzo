@@ -171,11 +171,16 @@ barra inferior con © año automático (JS #year), etiqueta de página y
 ----------------------------------------------------------------
 11. RESPONSIVE (escritorio intacto; todo bajo breakpoints en styles.css)
 ----------------------------------------------------------------
-Bloque "RESPONSIVE" al final del CSS: variables compactas ≤720px,
-header compacto ≤640px (sin numeritos, con wrap de seguridad),
-titulares display con vw + hyphens ≤560px (portada 12.5vw),
-extra ≤380px, y anti-desbordes (flex-wrap, overflow-wrap, max-width).
-Nuevos estilos deben seguir este patrón (media queries, no tocar base).
+Bloque "RESPONSIVE AVANZADO" al final del CSS. Rangos cubiertos:
+  320-400 movil pequeno · 390-430 movil · 401-600 movil amplio ·
+  601-900 tablet vertical · 1024-1366 tablet horizontal / laptop ·
+  1440+ escritorio · 1600+ ultrawide · landscape de movil (altura corta).
+  Incluye: text-size-adjust iOS, respaldo de svh, safe-area-insets
+  (viewport-fit=cover en las 3 paginas), objetivos tactiles de 44px,
+  pointer:coarse sin cursor propio, prefers-contrast:more.
+  OJO al tocar grids de proyecto: al colapsar hay que resetear
+  grid-column/grid-row o se crean columnas implicitas (bug corregido
+  en el MQ de 900px). Nuevos estilos: media queries, no tocar base.
 
 ----------------------------------------------------------------
 12. NOTAS PARA OTRO AGENTE

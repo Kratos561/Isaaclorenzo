@@ -333,9 +333,17 @@ ol, ul { list-style: none; }
 }
 .project--video:hover .project__media::after { background: var(--accent); border-color: var(--accent); color: var(--color-black); }
 @media (max-width: 900px) {
+  /* Al colapsar a 1 columna hay que neutralizar las colocaciones
+     grid-column/grid-row o se crean columnas implicitas y se rompe. */
   .project, .project--split, .project--tall, .project--strip { grid-template-columns: 1fr !important; }
-  .project--split .project__media, .project--type-first .project__media { margin: 0; }
+  .project--split .project__media,
+  .project--type-first .project__media { margin: 0; }
   .project__body { grid-template-columns: 1fr; }
+  .project--split .project__head, .project--split .project__body, .project--split .project__media,
+  .project--tall .project__head,  .project--tall .project__body,  .project--tall .project__media {
+    grid-column: 1 / -1; grid-row: auto;
+  }
+  .project--tall .project__media { aspect-ratio: 4 / 5; max-height: 70svh; }
 }
 
 /* ============ SLOT ============ */
@@ -502,7 +510,7 @@ ol, ul { list-style: none; }
 .project--type-first .project__media { margin-left: auto; margin-right: auto; max-width: 760px; width: 100%; aspect-ratio: 16 / 9; }
 .project--strip .project__media { aspect-ratio: 16 / 9; max-width: 1040px; }
 
-/* Videos: 2 columnas en escritorio para acortar el scroll vacío */
+/* Videos: 2 columnas en escritorio; 1 columna solo en movil estrecho */
 #moving { display: grid; grid-template-columns: 1fr 1fr; gap: 0 var(--space-4); align-items: start; padding: 0 var(--space-4) var(--space-5); }
 #moving > .chapter__head { grid-column: 1 / -1; padding-left: 0; padding-right: 0; }
 #moving > .project { grid-column: auto; padding-left: 0; padding-right: 0; }
@@ -510,9 +518,6 @@ ol, ul { list-style: none; }
 #moving > #video-01 { grid-column: 1 / -1; }
 #moving > #video-01 .project__media { max-width: 1040px; }
 @media (max-width: 900px) {
-  #moving { grid-template-columns: 1fr; padding: 0; }
-  #moving > .chapter__head { padding-left: var(--space-4); padding-right: var(--space-4); }
-  #moving > .project { padding-left: var(--space-4); padding-right: var(--space-4); }
   .project__media, .project--split .project__media, .project--tall .project__media, .project--type-first .project__media, .thumb-embed, .video-embed { max-width: 100%; max-height: none; margin-inline: auto; }
 }
 
@@ -584,6 +589,107 @@ ol, ul { list-style: none; }
 .thumb-embed iframe,
 .thumb-embed img {
   max-width: 100%;
+}
+
+/* ============================================================
+   RESPONSIVE AVANZADO
+   Objetivos: 320px (movil pequeno) · 390-430 (movil) ·
+   600-900 (tablet vertical) · 1024-1366 (tablet horizontal /
+   laptop) · 1440+ (escritorio) · landscape de movil (altura corta)
+   Escritorio (>=1024px) intacto.
+   ============================================================ */
+
+/* --- iOS: no ajustar el texto automaticamente (bug de Safari) --- */
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+
+/* --- Respaldo de unidades dinamicas de altura (navegadores viejos) --- */
+@supports not (height: 1svh) {
+  .hero { min-height: 100vh; }
+  .hero--sub { min-height: 58vh; }
+}
+
+/* --- Pantallas con muesca / barras del sistema (todas las paginas) --- */
+@supports (padding: max(0px)) {
+  .hdr {
+    padding-left: max(var(--space-4), env(safe-area-inset-left));
+    padding-right: max(var(--space-4), env(safe-area-inset-right));
+  }
+  .about, .chapter__head, .services, .process, .stats .stat, .contact { padding-left: max(var(--space-4), env(safe-area-inset-left)); padding-right: max(var(--space-4), env(safe-area-inset-right)); }
+  .foot { padding-bottom: env(safe-area-inset-bottom); }
+}
+
+/* --- TABLET VERTICAL (600-900px): 2 columnas donde cabe, sin apretar --- */
+@media (min-width: 601px) and (max-width: 900px) {
+  .about__grid { grid-template-columns: minmax(0, 4fr) minmax(0, 6fr); gap: var(--space-4); }
+  .index-card__desc { max-width: none; }
+  #moving { grid-template-columns: 1fr 1fr; }
+  #moving > .project { padding-left: 0; padding-right: 0; }
+  #moving > .chapter__head { padding-left: var(--space-4); padding-right: var(--space-4); }
+  #moving > #video-01 { grid-column: 1 / -1; }
+}
+
+/* --- MOVIL Y TABLET: objetivos tactiles de 44px (Apple HIG / WCAG 2.5.8) --- */
+@media (max-width: 900px), (hover: none) and (pointer: coarse) {
+  .hdr__link { display: inline-flex; align-items: center; min-height: 44px; padding-inline: .35rem; }
+  .project__next, .project__foot a, .foot__nav a, .foot__contact a, .project__caption {
+    display: inline-flex; align-items: center; min-height: 44px;
+  }
+  .foot__top-btn { display: inline-flex; align-items: center; min-height: 44px; }
+  .back { min-height: 44px; align-items: center; }
+  .tag { padding: .45rem .6rem; }
+  .btn { min-height: 44px; align-items: center; }
+}
+
+/* --- MOVIL: mas aire lateral, telaranas mas discretas --- */
+@media (max-width: 600px) {
+  :root { --space-4: 1.1rem; --space-3: 1.1rem; }
+  .hero { padding-block: calc(var(--space-8) * .7) var(--space-5); }
+  .hero--sub { padding-top: calc(var(--space-7) + 2.5rem); min-height: 52svh; }
+  .project__title { max-width: none; }
+  .about__lead { max-width: none; }
+  .chapter__title { max-width: none; }
+  .project--type-first .project__title { font-size: var(--step-3); }
+  #moving { grid-template-columns: 1fr; }
+  .web { opacity: .22; }
+  .web--services { width: 130%; opacity: .16; }
+  .web--slate, .web--3dhero, .web--3dhero-l { opacity: .18; }
+}
+
+/* --- MOVIL PEQUENO (320-400px): nada se desborda --- */
+@media (max-width: 400px) {
+  .hdr { flex-wrap: wrap; row-gap: .2rem; }
+  .hdr__nav { gap: .5rem; }
+  .hdr__link { font-size: .62rem; min-height: 40px; }
+  .portafolio-word { font-size: clamp(1.35rem, 8vw, 2.2rem); }
+  .hero__name, .contact__title { font-size: clamp(2.1rem, 13vw, 3rem); }
+  .project__media, .thumb-embed, .video-embed { aspect-ratio: 4 / 3; }
+  .project--tall .project__media { aspect-ratio: 3 / 4; }
+  .contact__cta { font-size: var(--step-1); }
+}
+
+/* --- MOVIL EN HORIZONTAL (altura corta): evitar que todo ocupe la pantalla --- */
+@media (max-width: 900px) and (orientation: landscape) and (max-height: 500px) {
+  .hero, .hero--sub { min-height: auto; padding-block: 5rem var(--space-5); }
+  .portafolio-word { font-size: clamp(2.2rem, 11vw, 5rem); }
+  .logo--hero { height: 120px; }
+  .logo--contact { height: 110px; }
+}
+
+/* --- PUNTERO GRUESO (toque): sin cursor personalizado ni magneticos --- */
+@media (pointer: coarse) {
+  .cursor { display: none; }
+  body, a, button { cursor: auto; }
+}
+
+/* --- ACCESIBILIDAD: respeta preferencia de contraste del sistema --- */
+@media (prefers-contrast: more) {
+  :root { --fg-muted: #a8a29a; --rule: #6b6862; }
+  .editorial, .label--accent, .btn--solid { color: #ff6a63; }
+}
+
+/* --- CONTENIDO DENTRO DE ALTURAS MUY ALTAS (monitores 21:9) --- */
+@media (min-width: 1600px) {
+  .hero__grid, .chapter, .about, .services, .process, .contact, #moving { max-width: 1500px; margin-inline: auto; }
 }
 
 /* ============ REVEAL ============ */
