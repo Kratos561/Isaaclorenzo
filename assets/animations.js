@@ -6,8 +6,53 @@
    Si el CDN no carga, la web usa su sistema CSS/IO de respaldo.
    ============================================================ */
 (function () {
-  if (!window.gsap || !window.ScrollTrigger) return;
-  gsap.registerPlugin(ScrollTrigger);
+  /* ---------- RED DE SEGURIDAD: el contenido NUNCA queda invisible ----------
+     El callback de gsap.matchMedia() es asincrono y a veces corre DESPUES
+     de nuestro primer chequeo, volviendo a ocultar con autoAlpha:0. Por eso
+     aqui no basta un unico failsafe: se comprueba cada segundo y se fuerza
+     hasta que no queda nada oculto. clearProps borra lo que GSAP escribio. */
+  function revealNode(n, tag) {
+    try { if (window.gsap) gsap.set(n, { clearProps: "all" }); } catch (e) {}
+    n.setAttribute("data-state", "in");
+    n.setAttribute("data-forced", tag || "");
+    n.style.opacity = "1";
+    n.style.visibility = "visible";
+    n.style.transform = "none";
+    n.style.clipPath = "none";
+  }
+
+  function forceRevealAll(tag) {
+    /* Al quitar 'js' el CSS deja de ocultar los reveals. */
+    document.documentElement.classList.remove("js");
+    document.documentElement.classList.remove("gsap-on");
+    var nodes = document.querySelectorAll("[data-reveal]");
+    for (var i = 0; i < nodes.length; i++) revealNode(nodes[i], tag);
+  }
+
+  function hiddenCount() {
+    var nodes = document.querySelectorAll("[data-reveal]");
+    var n = 0;
+    for (var i = 0; i < nodes.length; i++) {
+      var cs = getComputedStyle(nodes[i]);
+      if (parseFloat(cs.opacity) < 0.05 || cs.visibility === "hidden") n++;
+    }
+    return n;
+  }
+
+  window.__aisakForceReveal = forceRevealAll;
+
+  /* Vigilante: cada segundo comprueba; a los 2s fuerza y sigue vigilando. */
+  var ticks = 0;
+  var guard = setInterval(function () {
+    ticks++;
+    if (!document.querySelector("[data-reveal]")) { clearInterval(guard); return; }
+    if (hiddenCount() === 0) { clearInterval(guard); return; }
+    if (ticks >= 2) forceRevealAll("guard");
+    if (ticks >= 20) { clearInterval(guard); }
+  }, 1000);
+
+  if (!window.gsap || !window.ScrollTrigger) { forceRevealAll("no-gsap"); return; }
+  try { gsap.registerPlugin(ScrollTrigger); } catch (e) { forceRevealAll("bad-plugin"); return; }
 
   gsap.defaults({ duration: 0.7, ease: "power3.out" });
 
@@ -20,7 +65,9 @@
     },
     (context) => {
       const { reduceMotion, finePointer } = context.conditions;
-      if (reduceMotion) return; // el CSS ya anula el movimiento
+      /* Con movimiento reducido no animamos, pero dejamos el
+         contenido visible de inmediato (no depende de GSAP). */
+      if (reduceMotion) { forceRevealAll("reduced-motion"); return; }
 
       document.documentElement.classList.add("gsap-on");
 

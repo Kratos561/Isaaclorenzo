@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>Isaac Lorenzo — AISAK 3D / Video</title>
 <meta name="description" content="Portafolio de Isaac Lorenzo (AISAK 3D): arte 3D y video. Subpáginas dedicadas a 3D y Video, sobre mí con foto y contacto." />
+<script>document.documentElement.classList.add('js');</script>
 <link rel="icon" type="image/png" href="assets/logo.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -266,16 +267,19 @@
   }
 })();
 (function () {
-  if (window.gsap && window.ScrollTrigger) return; // GSAP owns reveals
+  /* Red de seguridad de reveals: corre SIEMPRE.
+     Si GSAP esta activo elowns las animaciones, pero este observador
+     solo fija data-state="in" (idempotente) y garantiza que el contenido
+     quede visible aunque ScrollTrigger no dispare. */
   const nodes = document.querySelectorAll('[data-reveal]');
-  if (!nodes.length) return;
-  if (matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) {
-    nodes.forEach(n => n.dataset.state = 'in'); return;
+  if (nodes.length && !matchMedia('(prefers-reduced-motion: reduce)').matches && 'IntersectionObserver' in window) {
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.dataset.state = 'in'; io.unobserve(e.target); } });
+    }, { rootMargin: '0px 0px -8% 0px' });
+    nodes.forEach(n => io.observe(n));
+  } else {
+    nodes.forEach(n => n.dataset.state = 'in');
   }
-  const io = new IntersectionObserver(entries => {
-    entries.forEach(e => { if (e.isIntersecting) { e.target.dataset.state = 'in'; io.unobserve(e.target); } });
-  }, { rootMargin: '-10% 0px' });
-  nodes.forEach(n => { n.dataset.state = 'out'; io.observe(n); });
 })();
 (function () {
   const supportsHover = matchMedia('(hover: hover) and (pointer: fine)').matches;

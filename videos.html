@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>Videos — Isaac Lorenzo / AISAK 3D</title>
 <meta name="description" content="Subpágina Videos de Isaac Lorenzo: reel, montajes y piezas cinemáticas." />
+<script>document.documentElement.classList.add('js');</script>
 <link rel="icon" type="image/png" href="assets/logo.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -139,7 +140,7 @@
 <script src="assets/animations.js"></script>
 <script>
 (function(){const hdr=document.getElementById('hdr');const onScroll=()=>hdr&&hdr.classList.toggle('hdr--scrolled',window.scrollY>40);onScroll();window.addEventListener('scroll',onScroll,{passive:true});})();
-(function(){if(window.gsap&&window.ScrollTrigger)return;const nodes=document.querySelectorAll('[data-reveal]');if(!nodes.length)return;if(matchMedia('(prefers-reduced-motion: reduce)').matches||!('IntersectionObserver' in window)){nodes.forEach(n=>n.dataset.state='in');return;}const io=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.target.dataset.state='in';io.unobserve(e.target);}});},{rootMargin:'-10% 0px'});nodes.forEach(n=>{n.dataset.state='out';io.observe(n);});})();
+(function(){const nodes=document.querySelectorAll('[data-reveal]');if(!nodes.length)return;if(matchMedia('(prefers-reduced-motion: reduce)').matches||!('IntersectionObserver' in window)){nodes.forEach(n=>n.dataset.state='in');return;}const io=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.target.dataset.state='in';io.unobserve(e.target);}});},{rootMargin:'0px 0px -8% 0px'});nodes.forEach(n=>io.observe(n));})();
 (function(){const ok=matchMedia('(hover: hover) and (pointer: fine)').matches;const rd=matchMedia('(prefers-reduced-motion: reduce)').matches;if(!ok||rd)return;const c=document.getElementById('cursor');const l=document.getElementById('cursorLabel');if(!c)return;let x=innerWidth/2,y=innerHeight/2,tx=x,ty=y,prev=0;const SMOOTH=22;const tick=ts=>{if(!prev)prev=ts;const dt=Math.min(64,ts-prev);prev=ts;const k=1-Math.exp(-dt/SMOOTH);x+=(tx-x)*k;y+=(ty-y)*k;c.style.transform=`translate(${x}px,${y}px) translate(-50%,-50%)`;requestAnimationFrame(tick);};tick(0);window.addEventListener('pointermove',e=>{tx=e.clientX;ty=e.clientY;},{passive:true});document.querySelectorAll('[data-cursor],a,button').forEach(el=>{const m=el.getAttribute('data-cursor');if(!m)return;el.addEventListener('pointerenter',()=>{c.classList.add('is-view');l.textContent=m==='open'?'ABRIR':'VER';});el.addEventListener('pointerleave',()=>{c.classList.remove('is-view');});});})();
 (function(){
   document.querySelectorAll('.thumb-btn[data-yt]').forEach(btn => {

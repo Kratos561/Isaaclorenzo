@@ -128,9 +128,16 @@ Reglas de las skills aplicadas: registerPlugin, defaults, camelCase y
 aliases de transform (x/y/scale/rotation/autoAlpha), eases documentados,
 matchMedia con prefers-reduced-motion (sin animación si se pide),
 sin scrub+toggleActions juntos, sin ScrollTrigger en tweens anidados.
-FALLBACK: si el CDN falla, los scripts inline (reveal por
-IntersectionObserver) y el CSS mantienen la web usable. Los reveals
-inline se desactivan solos si window.gsap+ScrollTrigger existen.
+FALLBACK (CRITICO - NO BORRAR): al inicio de animations.js hay una
+  "red de seguridad" que comprueba cada segundo que ningun [data-reveal]
+  siga con opacity 0 / visibility hidden y, si es asi, lo fuerza
+  (clearProps de GSAP + quita las clases js y gsap-on). Sin ella, si
+  GSAP falla, se cuelga, o su callback asincrono corre DESPUES del
+  chequeo, el contenido queda invisible para siempre: autoAlpha:0 de
+  GSAP controla ademas visibility, no solo opacity. El IntersectionObserver
+  inline corre SIEMPRE (ya no se salta si hay GSAP) y el CSS solo
+  oculta cuando existe html.js. Regla: el contenido nunca debe depender
+  de JS para ser visible.
 
 ----------------------------------------------------------------
 8. VIDEOS (videos.html: SOLO video + título, sin descripción)

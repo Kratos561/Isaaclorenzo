@@ -222,7 +222,7 @@ ol, ul { list-style: none; }
 .dot { display: inline-block; width: .5rem; height: .5rem; background: var(--accent); border-radius: 50%; margin-right: .5rem; vertical-align: middle; animation: dotPulse 2s ease-in-out infinite; }
 @keyframes dotPulse { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
 .hero__name { font-size: var(--step-5); line-height: var(--hero-name-leading); letter-spacing: var(--display-tracking-tight); text-transform: uppercase; grid-column: 1 / -1; display: block; position: relative; z-index: 2; }
-.hero__line { display: block; overflow: hidden; }
+.hero__line { display: block; overflow: hidden; padding-bottom: .14em; margin-bottom: -.14em; }
 .hero__line > span { display: block; transform: translateY(105%); animation: heroLine var(--dur-slow) var(--ease-out) forwards; }
 .hero__line--a > span { animation-delay: 100ms; }
 .hero__line--b > span { animation-delay: 220ms; }
@@ -298,7 +298,10 @@ ol, ul { list-style: none; }
 .project__caption { margin-top: var(--space-2); font-size: var(--step--1); color: var(--fg-muted); font-family: var(--font-mono); letter-spacing: var(--nav-tracking); text-transform: uppercase; }
 .project__body { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: var(--space-4); align-items: start; }
 .project__meta { display: grid; gap: .5rem; font-size: var(--step--1); }
-.project__meta > div { display: grid; grid-template-columns: 8ch 1fr; border-top: 1px solid var(--rule); padding-top: .5rem; }
+/* 8ch no cabia para "HERRAMIENTAS" (11 caracteres) y la etiqueta se
+   solapaba con su valor. 7.5rem escala con la raiz y mantiene la
+   alineacion entre filas. */
+.project__meta > div { display: grid; grid-template-columns: 7.5rem 1fr; border-top: 1px solid var(--rule); padding-top: .5rem; }
 .project__meta dt { color: var(--fg-muted); text-transform: uppercase; letter-spacing: var(--nav-tracking); }
 .project__desc { max-width: 52ch; line-height: 1.55; font-size: var(--step-0); }
 .project__foot { grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: baseline; border-top: 1px solid var(--rule); padding-top: var(--space-2); margin-top: var(--space-2); }
@@ -340,10 +343,16 @@ ol, ul { list-style: none; }
   .project--type-first .project__media { margin: 0; }
   .project__body { grid-template-columns: 1fr; }
   .project--split .project__head, .project--split .project__body, .project--split .project__media,
-  .project--tall .project__head,  .project--tall .project__body,  .project--tall .project__media {
+.project--tall .project__head, .project--tall .project__body,  .project--tall .project__media {
     grid-column: 1 / -1; grid-row: auto;
   }
   .project--tall .project__media { aspect-ratio: 4 / 5; max-height: 70svh; }
+  /* Estas variantes son mas especificas que .project__body: hay que
+     neutralizarlas aqui o se quedan a 2 columnas en movil. */
+  .project--strip .project__body,
+  .project--type-first .project__body { grid-template-columns: 1fr; max-width: none; }
+  .project--strip .project__title,
+  .project--type-first .project__title { font-size: var(--step-3); }
 }
 
 /* ============ SLOT ============ */
@@ -522,7 +531,7 @@ ol, ul { list-style: none; }
 }
 
 /* ============ TELARAÑAS PNG (transparentes, viajan con el scroll) ============ */
-.has-web { position: relative; overflow: hidden; }
+.has-web { position: relative; overflow: clip; }
 .web { position: absolute; z-index: 0; pointer-events: none; max-width: none; }
 .has-web > :not(.web),
 .hero > :not(.web):not(.cover-bg-img):not(.hero__logo),
@@ -572,6 +581,9 @@ ol, ul { list-style: none; }
     line-height: .92;
     hyphens: auto;
   }
+  /* line-height muy apretado + overflow:hidden del reveal = descendentes
+     cortadas ("objetos y luz" se ve partida por la mitad). */
+  .hero__line { line-height: 1.08; padding-bottom: .1em; margin-bottom: -.1em; }
   .chapter__title { hyphens: auto; }
 }
 @media (max-width: 380px) {
@@ -618,7 +630,7 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
   .foot { padding-bottom: env(safe-area-inset-bottom); }
 }
 
-/* --- TABLET VERTICAL (600-900px): 2 columnas donde cabe, sin apretar --- */
+/* --- TABLET VERTICAL (600-900px): titulares y 2 columnas donde cabe --- */
 @media (min-width: 601px) and (max-width: 900px) {
   .about__grid { grid-template-columns: minmax(0, 4fr) minmax(0, 6fr); gap: var(--space-4); }
   .index-card__desc { max-width: none; }
@@ -626,6 +638,9 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
   #moving > .project { padding-left: 0; padding-right: 0; }
   #moving > .chapter__head { padding-left: var(--space-4); padding-right: var(--space-4); }
   #moving > #video-01 { grid-column: 1 / -1; }
+  /* A 600-900px --step-5 se desborda (13vw deja titulos de ~124px).
+     Se recorta solo el maximo de la mitad, no el tamanho de escritorio. */
+  .hero__name, .contact__title { font-size: clamp(3rem, 9vw, 5.5rem); }
 }
 
 /* --- MOVIL Y TABLET: objetivos tactiles de 44px (Apple HIG / WCAG 2.5.8) --- */
@@ -692,12 +707,17 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
   .hero__grid, .chapter, .about, .services, .process, .contact, #moving { max-width: 1500px; margin-inline: auto; }
 }
 
-/* ============ REVEAL ============ */
+/* ============ REVEAL ============
+   El estado oculto SOLO se aplica si hay JS (html.js). Asi, sin JS
+   o si GSAP falla, el contenido se ve siempre. La red de seguridad
+   final esta en animations.js (failsafe) y en el IntersectionObserver
+   inline, que ya no se salta cuando GSAP esta presente. */
 [data-reveal] { transition: opacity var(--dur-slow) var(--ease-out), transform var(--dur-slow) var(--ease-out), clip-path var(--dur-slow) var(--ease-out); }
-[data-reveal][data-from="up"]    { opacity: 0; transform: translateY(28px); }
-[data-reveal][data-from="right"] { opacity: 0; transform: translateX(40px); }
-[data-reveal][data-from="mask"]  { clip-path: inset(0 0 100% 0); }
+.js [data-reveal][data-from="up"]    { opacity: 0; transform: translateY(28px); }
+.js [data-reveal][data-from="right"] { opacity: 0; transform: translateX(40px); }
+.js [data-reveal][data-from="mask"]  { clip-path: inset(0 0 100% 0); }
 [data-reveal][data-state="in"]   { opacity: 1; transform: none; clip-path: inset(0 0 0 0); }
+[data-reveal][data-forced]      { opacity: 1 !important; visibility: visible !important; transform: none !important; clip-path: none !important; }
 
 /* GSAP activo: él controla los reveals vía inline styles, sin transiciones CSS */
 html.gsap-on [data-reveal] { transition: none; }
